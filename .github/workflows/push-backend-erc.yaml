@@ -1,4 +1,4 @@
-name: Push anon aadhaar non merklized frontend to AWS ECR
+name: Push anon aadhaar non merklized backend to AWS ECR
 
 on:
   workflow_dispatch:
@@ -9,15 +9,13 @@ on:
 env:
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID_PRIVADO_ID }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION_PRIVADO_ID }}
-  ECR_REPOSITORY: anon-aadhaar-non-merklized_issuer_frontend_demo
-  NEXT_PUBLIC_ISSUER_URL: ${{ vars.NEXT_PUBLIC_ISSUER_URL }}
-  NEXT_PUBLIC_NULLIFIER_SEED: ${{ vars.NEXT_PUBLIC_NULLIFIER_SEED }}
+  ECR_REPOSITORY: anon-aadhaar-non-merklized_issuer_backend_demo
 
 jobs:
   deploy:
     environment:
       name: ${{ github.ref_name }}
-    name: Build and deploy anon aadhaar non merklized issuer frontend to AWS ECR
+    name: Build and deploy anon aadhaar non merklized issuer backend to AWS ECR
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -53,10 +51,7 @@ jobs:
         run: |
           docker build \
             -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest \
-            -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} \
-            --build-arg="NEXT_PUBLIC_ISSUER_URL=${{ env.NEXT_PUBLIC_ISSUER_URL }}" \
-            --build-arg="NEXT_PUBLIC_NULLIFIER_SEED=${{ env.NEXT_PUBLIC_NULLIFIER_SEED }}" \
-            -f client/Dockerfile client
+            -t ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }} .
 
           docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           docker push ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
