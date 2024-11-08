@@ -6,6 +6,26 @@ import abi from "./abi.json";
 const nullifierSeed = process.env.NEXT_PUBLIC_NULLIFIER_SEED!;
 const contractABI = abi.abi;
 
+const amoyChainID: bigint = BigInt(80002);
+export const switchNetwork = async () => {
+  const web3 = new Web3(window.ethereum);
+  const networkId = await web3.eth.net.getId();
+  if (networkId !== amoyChainID) {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: `0x${amoyChainID.toString(16)}` }],
+      });
+    } catch (switchError: any) {
+      if (switchError.code === 4902) {
+        throw new Error('This network is not available in your MetaMask, please add it.');
+      } else {
+        throw new Error('Failed to switch network');
+      }
+    }
+  }
+};
+
 export const issueCredential = async (
   contractAddress: string,
   userId: Id,
