@@ -9,7 +9,7 @@ on:
 env:
   AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID_PRIVADO_ID }}
   AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION_PRIVADO_ID }}
-  ECR_REPOSITORY: anon-aadhaar-non-merklized_issuer_frontend_demo
+  ECR_REPOSITORY: anon_aadhaar_non_merklized_issuer_frontend_demo
   NEXT_PUBLIC_ISSUER_URL: ${{ vars.NEXT_PUBLIC_ISSUER_URL }}
   NEXT_PUBLIC_NULLIFIER_SEED: ${{ vars.NEXT_PUBLIC_NULLIFIER_SEED }}
 
