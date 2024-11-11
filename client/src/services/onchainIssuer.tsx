@@ -43,6 +43,8 @@ export const issueCredential = async (
   try {
     const gasPrice = await web3.eth.getGasPrice();
     const priorityGasPrice = (gasPrice * BigInt(150)) / BigInt(100);
+    const gasLimit = await onchainNonMerklizedIssuer.methods.issueCredential(userId.bigInt()).estimateGas({ from });
+    const increasedGasLimit = gasLimit * BigInt(120) / BigInt(100);
 
     await onchainNonMerklizedIssuer.methods
       .issueCredential(
@@ -62,6 +64,7 @@ export const issueCredential = async (
       .send({
         from,
         maxPriorityFeePerGas: priorityGasPrice.toString(),
+        gas: increasedGasLimit.toString(),
       });
   } catch (e) {
     console.error("Error estimating gas or sending transaction:", e);
