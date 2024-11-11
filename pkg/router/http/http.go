@@ -13,17 +13,20 @@ type Handlers struct {
 	systemHandler         handlers.SystemHandler
 	authenticationHandler handlers.AuthenticationHandlers
 	issuerHandler         handlers.IssuerHandlers
+	agentHandler          handlers.AgentHandlers
 }
 
 func NewHandlers(
 	systemHandler handlers.SystemHandler,
 	authHendler handlers.AuthenticationHandlers,
 	issuerHandler handlers.IssuerHandlers,
+	agentHandler handlers.AgentHandlers,
 ) Handlers {
 	return Handlers{
 		systemHandler:         systemHandler,
 		authenticationHandler: authHendler,
 		issuerHandler:         issuerHandler,
+		agentHandler:          agentHandler,
 	}
 }
 
@@ -42,6 +45,7 @@ func (h *Handlers) NewRouter(opts ...Option) http.Handler {
 	h.basicRouters(r)
 	h.authRouters(r)
 	h.apiRouters(r)
+	// h.agentRouters(r)
 
 	return r
 }
@@ -60,5 +64,6 @@ func (h Handlers) authRouters(r *chi.Mux) {
 func (h Handlers) apiRouters(r *chi.Mux) {
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Get("/issuers", h.issuerHandler.GetIssuersList)
+		r.Post("/agent", h.agentHandler.Agent)
 	})
 }

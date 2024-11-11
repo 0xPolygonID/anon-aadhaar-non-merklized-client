@@ -26,6 +26,41 @@ import {
   useProver,
 } from "@anon-aadhaar/react";
 
+import { createWeb3Modal } from '@web3modal/wagmi/react'
+import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
+
+import { WagmiProvider } from 'wagmi'
+import { arbitrum, mainnet } from 'wagmi/chains'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
+// 1. Get projectId from https://cloud.walletconnect.com
+const projectId = '06c286be2bb4b0daab437ac5ad239df3'
+
+// 2. Create wagmiConfig
+const metadata = {
+  name: 'Web3Modal',
+  description: 'Web3Modal Example',
+  url: 'https://web3modal.com', // origin must match your domain & subdomain
+  icons: ['https://avatars.githubusercontent.com/u/37784886']
+}
+
+const chains = [mainnet, arbitrum] as const
+const config = defaultWagmiConfig({
+  chains,
+  projectId,
+  metadata,
+})
+
+// 3. Create modal
+createWeb3Modal({
+  wagmiConfig: config,
+  projectId,
+  enableAnalytics: true, // Optional - defaults to your Cloud configuration
+  enableOnramp: true // Optional - false as default
+})
+
 const nullifierSeed = process.env.NEXT_PUBLIC_NULLIFIER_SEED || "";
 
 interface IssuerInfo {
@@ -55,6 +90,7 @@ const App = () => {
   const [, latestProof] = useProver();
   const [metamaskWalletAddress, setMetamaskwalletAddress] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [selectedIssuerContext, setSelectedIssuerContext] = useState<string>("");
 
   useEffect(() => {
     if (anonAadhaar.status === "logged-in") {
@@ -62,19 +98,18 @@ const App = () => {
     }
   }, [anonAadhaar]);
 
-  const { selectedIssuerContext } = useContext(SelectedIssuerContext);
   useEffect(() => {
-    if (!selectedIssuerContext) {
-      router.push("/");
-      return;
-    }
+    const params = new URLSearchParams(document.location.search);
+    const userID = params.get('userID');
+    const issuerID = params.get('issuerID');
 
-    const issuerDid = DID.parse(selectedIssuerContext);
+    const issuerDid = DID.parse(issuerID as string);
     const issuerId = DID.idFromDID(issuerDid);
     const issuerAddress = Hex.encodeString(Id.ethAddressFromId(issuerId));
     setIssuerInfo({ did: issuerDid, id: issuerId, address: issuerAddress });
+    setSelectedIssuerContext(issuerID as string);
 
-    const userDid = DID.parse(router.query.userID as string);
+    const userDid = DID.parse(userID as string);
     const userId = DID.idFromDID(userDid);
     setUserInfo({ did: userDid, id: userId });
 
@@ -85,7 +120,7 @@ const App = () => {
       .catch((error) => {
         setError(`Failed to get user credentials: ${error}`);
       });
-  }, [selectedIssuerContext, router]);
+  }, [router]);
 
   const getMetamaskWallet = async () => {
     try {
@@ -184,6 +219,10 @@ const App = () => {
             </Box>
           </Box>
 
+          <Box>
+            <w3m-button />
+          </Box>
+
           <Box marginTop="35px">
             <Typography variant="h6" textAlign="left">
               Or issue a new balance credential for user:
@@ -251,3 +290,5 @@ const App = () => {
 };
 
 export default App;
+
+// https://9ea3-144-2-167-110.ngrok-free.app/claim?userID=did:iden3:privado:main:2SduLiPnPFU7NDvKRuNSnYQo1nugWY3An6t8N9cQip&issuerID=did:iden3:polygon:amoy:x6x5sor7zpxpkZP8J8ZL5uuFm4hXdM76EDvKpu6fj
