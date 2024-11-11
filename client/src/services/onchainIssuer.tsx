@@ -43,8 +43,21 @@ export const issueCredential = async (
   try {
     const gasPrice = await web3.eth.getGasPrice();
     const priorityGasPrice = (gasPrice * BigInt(150)) / BigInt(100);
-    const gasLimit = await onchainNonMerklizedIssuer.methods.issueCredential(userId.bigInt()).estimateGas({ from });
-    const increasedGasLimit = gasLimit * BigInt(120) / BigInt(100);
+    const gasLimit = await onchainNonMerklizedIssuer.methods.issueCredential(
+      userId.bigInt(),
+      nullifierSeed,
+      anonAadhaarProof.nullifier,
+      anonAadhaarProof.timestamp,
+      from,
+      [
+        anonAadhaarProof.ageAbove18,
+        anonAadhaarProof.gender,
+        anonAadhaarProof.pincode,
+        anonAadhaarProof.state,
+      ],
+      packedGroth16Proof
+    ).estimateGas({ from });
+    const increasedGasLimit = gasLimit * BigInt(130) / BigInt(100);
 
     await onchainNonMerklizedIssuer.methods
       .issueCredential(
