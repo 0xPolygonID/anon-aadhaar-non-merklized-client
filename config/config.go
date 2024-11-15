@@ -44,6 +44,8 @@ type Config struct {
 	Issuers []string `envconfig:"ISSUERS" required:"true"`
 
 	KeysDirPath string `envconfig:"KEYS_DIR_PATH" default:"./keys"`
+
+	FrontendURL string `envconfig:"FRONTEND_URL" required:"true"`
 }
 
 type Log struct {

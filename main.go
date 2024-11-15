@@ -74,7 +74,7 @@ func newHTTPServer(
 		issuerService,
 	)
 
-	agentHandlers, err := handlers.NewAgentHandlers("./keys/authV2.json", "https://9ea3-144-2-167-110.ngrok-free.app") // url to frontend
+	agentHandlers, err := handlers.NewAgentHandlers("./keys/authV2.json", cfg.FrontendURL) // url to frontend
 	if err != nil {
 		logger.WithError(err).Fatal("error creating agent handlers")
 	}

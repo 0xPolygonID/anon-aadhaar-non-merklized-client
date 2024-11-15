@@ -48,6 +48,7 @@ This is a demo frontend page that communicates with the [non-merklized on-chain 
    SUPPORTED_RPC="80002=<RPC_POLYGON_AMOY>"
    ISSUERS="<ISSUER_DID>"
    EXTERNAL_HOST="<NGROK_URL>"
+   FRONTEND_URL="<NGROK_URL>"
    ```
 
    `ISSUERS` supports an array of issuers in the format `"issuerDID1,issuerDID2"`

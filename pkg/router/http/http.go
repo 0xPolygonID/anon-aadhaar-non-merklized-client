@@ -45,7 +45,6 @@ func (h *Handlers) NewRouter(opts ...Option) http.Handler {
 	h.basicRouters(r)
 	h.authRouters(r)
 	h.apiRouters(r)
-	// h.agentRouters(r)
 
 	return r
 }
